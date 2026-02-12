@@ -47,16 +47,16 @@ export const HeaderBlockComponent: React.FC<HeaderBlockComponentProps> = ({
     >
       {/* Header Main Row - Logo and Links */}
       <div
-        className="flex items-center justify-between gap-6"
         style={{
           width: "100%",
           display: "flex",
           alignItems: "center",
-          justifyContent: "space-between",
+          justifyContent: "flex-start",
+          gap: "0",
         }}
       >
         {/* Logo */}
-        <div style={{ flexShrink: 0 }}>
+        <div style={{ flexShrink: 0, minWidth: "fit-content" }}>
           {block.logo ? (
             <img
               src={block.logo}
@@ -69,23 +69,44 @@ export const HeaderBlockComponent: React.FC<HeaderBlockComponentProps> = ({
               }}
             />
           ) : (
-            <label className="flex items-center justify-center cursor-pointer hover:bg-gray-100 rounded p-3 border-2 border-dashed border-gray-300" style={{ width: `${block.logoWidth}px`, height: `${block.logoHeight}px` }}>
-              <div className="flex flex-col items-center">
-                <Upload className="w-4 h-4 text-gray-400 mb-1" />
+            <div
+              style={{
+                width: `${block.logoWidth}px`,
+                height: `${block.logoHeight}px`,
+                border: "2px dashed #d0d0d0",
+                borderRadius: "4px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexDirection: "column",
+                cursor: "pointer",
+                backgroundColor: "#f9f9f9",
+              }}
+            >
+              <label style={{ cursor: "pointer", textAlign: "center" }}>
+                <Upload className="w-4 h-4 text-gray-400 mb-1 mx-auto" />
                 <p className="text-xs text-gray-500">Logo Image</p>
-              </div>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageUpload}
-                className="hidden"
-              />
-            </label>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  style={{ display: "none" }}
+                />
+              </label>
+            </div>
           )}
         </div>
 
         {/* Links */}
-        <div style={{ flexShrink: 0, display: "flex", gap: "8px", alignItems: "center", marginLeft: "auto" }}>
+        <div style={{
+          display: "flex",
+          gap: "8px",
+          alignItems: "center",
+          justifyContent: "flex-end",
+          flex: 1,
+          marginLeft: "auto",
+          paddingLeft: "24px",
+        }}>
           {block.links.length > 0 ? (
             block.links.map((link, index) => (
               <React.Fragment key={link.id}>
@@ -112,7 +133,6 @@ export const HeaderBlockComponent: React.FC<HeaderBlockComponentProps> = ({
                 fontSize: `${block.linksFontSize}px`,
                 color: block.linksFontColor,
               }}
-              className="text-xs"
             >
               No links
             </span>
