@@ -118,7 +118,7 @@ export const FooterWithSocialBlockComponent: React.FC<
             }}
             className={`py-4 px-2 cursor-pointer rounded transition-all relative ${
               selectedElement === "social"
-                ? "ring-2 ring-valasys-orange bg-orange-50"
+                ? "ring-2 ring-valasys-orange"
                 : ""
             }`}
             style={{
@@ -184,7 +184,7 @@ export const FooterWithSocialBlockComponent: React.FC<
               })}
             </div>
             {selectedElement === "social" && (
-              <div className="flex gap-1 justify-center mt-2 pt-2 border-t border-orange-200">
+              <div className="flex gap-1 justify-center mt-2">
                 <button
                   onClick={(e) => handleCopySection("social", e)}
                   title="Copy section"
@@ -209,7 +209,7 @@ export const FooterWithSocialBlockComponent: React.FC<
           <div
             className={`cursor-pointer rounded p-2 transition-all relative ${
               selectedElement === "enterpriseName"
-                ? "ring-2 ring-valasys-orange bg-orange-50"
+                ? "ring-2 ring-valasys-orange"
                 : ""
             }`}
             onClick={(e) => {
@@ -248,7 +248,7 @@ export const FooterWithSocialBlockComponent: React.FC<
               </h3>
             )}
             {selectedElement === "enterpriseName" && (
-              <div className="flex gap-1 justify-center mt-2 pt-2 border-t border-orange-200">
+              <div className="flex gap-1 justify-center mt-2">
                 <button
                   onClick={(e) => handleCopySection("enterpriseName", e)}
                   title="Copy section"
@@ -273,7 +273,7 @@ export const FooterWithSocialBlockComponent: React.FC<
           <div
             className={`cursor-pointer rounded p-2 transition-all relative ${
               selectedElement === "address"
-                ? "ring-2 ring-valasys-orange bg-orange-50"
+                ? "ring-2 ring-valasys-orange"
                 : ""
             }`}
             onClick={(e) => {
@@ -313,7 +313,7 @@ export const FooterWithSocialBlockComponent: React.FC<
               </p>
             )}
             {selectedElement === "address" && (
-              <div className="flex gap-1 justify-center mt-2 pt-2 border-t border-orange-200">
+              <div className="flex gap-1 justify-center mt-2">
                 <button
                   onClick={(e) => handleCopySection("address", e)}
                   title="Copy section"
@@ -338,7 +338,7 @@ export const FooterWithSocialBlockComponent: React.FC<
           <div
             className={`cursor-pointer rounded p-2 transition-all relative ${
               selectedElement === "subscriptionText"
-                ? "ring-2 ring-valasys-orange bg-orange-50"
+                ? "ring-2 ring-valasys-orange"
                 : ""
             }`}
             onClick={(e) => {
@@ -377,7 +377,7 @@ export const FooterWithSocialBlockComponent: React.FC<
               </p>
             )}
             {selectedElement === "subscriptionText" && (
-              <div className="flex gap-1 justify-center mt-2 pt-2 border-t border-orange-200">
+              <div className="flex gap-1 justify-center mt-2">
                 <button
                   onClick={(e) => handleCopySection("subscriptionText", e)}
                   title="Copy section"
@@ -402,7 +402,7 @@ export const FooterWithSocialBlockComponent: React.FC<
           <div
             className={`cursor-pointer rounded p-2 transition-all relative ${
               selectedElement === "unsubscribeLink"
-                ? "ring-2 ring-valasys-orange bg-orange-50"
+                ? "ring-2 ring-valasys-orange"
                 : ""
             }`}
             onClick={(e) => {
@@ -448,7 +448,7 @@ export const FooterWithSocialBlockComponent: React.FC<
               </a>
             )}
             {selectedElement === "unsubscribeLink" && (
-              <div className="flex gap-1 justify-center mt-2 pt-2 border-t border-orange-200">
+              <div className="flex gap-1 justify-center mt-2">
                 <button
                   onClick={(e) => handleCopySection("unsubscribeLink", e)}
                   title="Copy section"
