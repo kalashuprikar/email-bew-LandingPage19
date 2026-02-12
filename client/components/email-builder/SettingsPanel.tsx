@@ -5804,9 +5804,50 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
             </div>
           </div>
         );
-      case "navigation":
+      case "navigation": {
+        const navBlock = block as any;
         return (
           <div className="space-y-4">
+            {/* Navigation Items */}
+            <div className="border-b pb-4">
+              <Label className="font-semibold mb-3">Navigation Items</Label>
+              <div className="space-y-3">
+                {navBlock.items.map((item: any, idx: number) => (
+                  <div key={idx} className="space-y-2 p-3 bg-gray-50 rounded">
+                    <div>
+                      <Label htmlFor={`nav-label-${idx}`} className="text-xs">Label</Label>
+                      <Input
+                        id={`nav-label-${idx}`}
+                        value={item.label}
+                        onChange={(e) => {
+                          const updatedItems = [...navBlock.items];
+                          updatedItems[idx] = { ...item, label: e.target.value };
+                          onBlockUpdate({ ...navBlock, items: updatedItems });
+                        }}
+                        placeholder="Link label"
+                        className="text-sm"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor={`nav-link-${idx}`} className="text-xs">URL</Label>
+                      <Input
+                        id={`nav-link-${idx}`}
+                        value={item.link}
+                        onChange={(e) => {
+                          const updatedItems = [...navBlock.items];
+                          updatedItems[idx] = { ...item, link: e.target.value };
+                          onBlockUpdate({ ...navBlock, items: updatedItems });
+                        }}
+                        placeholder="https://example.com"
+                        className="text-sm"
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Style Options */}
             <div>
               <Label htmlFor="navBgColor">Background Color</Label>
               <Input
@@ -5847,8 +5888,20 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                 <option value="right">Right</option>
               </select>
             </div>
+            <div>
+              <Label htmlFor="navPadding">Padding (px)</Label>
+              <Input
+                id="navPadding"
+                type="number"
+                value={block.padding}
+                onChange={(e) =>
+                  onBlockUpdate({ ...block, padding: parseInt(e.target.value) })
+                }
+              />
+            </div>
           </div>
         );
+      }
       case "twoColumnCard": {
         const twoColBlock = block as any;
         const selectedCard = twoColBlock.cards?.find(

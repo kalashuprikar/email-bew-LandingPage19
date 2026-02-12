@@ -12,8 +12,13 @@ export const NavigationBlockComponent: React.FC<
 > = ({ block, isSelected }) => {
   const isInlineDisplay = (block as any).displayMode === "inline";
 
-  // Inline display - render as horizontal centered links with dark background
+  // Inline display - render as horizontal links with dark background
   if (isInlineDisplay) {
+    const justifyContent =
+      block.alignment === "left" ? "flex-start" :
+      block.alignment === "right" ? "flex-end" :
+      "center";
+
     return (
       <div
         className={`relative transition-all ${
@@ -24,7 +29,7 @@ export const NavigationBlockComponent: React.FC<
           margin: `${block.margin}px`,
           display: "flex",
           alignItems: "center",
-          justifyContent: "center",
+          justifyContent: justifyContent,
           gap: "20px",
           width: "100%",
           backgroundColor: block.backgroundColor,

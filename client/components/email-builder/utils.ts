@@ -514,7 +514,7 @@ export function createHeaderLogoAndNavigationTemplate(): ContentBlock[] {
     height: 36,
     widthUnit: "px",
     alignment: "center",
-    padding: 20,
+    padding: 30,
     margin: 0,
     borderWidth: 0,
     borderColor: "#000000",
@@ -529,6 +529,7 @@ export function createHeaderLogoAndNavigationTemplate(): ContentBlock[] {
     { label: "Contact us", link: "#" },
     { label: "Find a shop", link: "#" },
   ];
+  navBlock.padding = 20;
   (navBlock as any).displayMode = "inline";
 
   return [logoBlock, navBlock];
