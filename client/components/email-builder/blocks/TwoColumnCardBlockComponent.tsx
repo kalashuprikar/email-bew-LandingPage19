@@ -1,8 +1,15 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { TwoColumnCardBlock } from "../types";
-import { Upload, Trash2, Plus, Copy } from "lucide-react";
+import { Upload, Trash2, Plus, Copy, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 
 const generateId = () =>
   `section-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
@@ -28,6 +35,15 @@ export const TwoColumnCardBlockComponent: React.FC<
   const [startY, setStartY] = useState(0);
   const [startWidth, setStartWidth] = useState(0);
   const [startHeight, setStartHeight] = useState(0);
+  const [editingButtonCardId, setEditingButtonCardId] = useState<string | null>(
+    null,
+  );
+  const [buttonEditForm, setButtonEditForm] = useState({
+    text: "",
+    link: "",
+    backgroundColor: "#FF6A00",
+    textColor: "#ffffff",
+  });
 
   const handleImageUpload = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -123,6 +139,75 @@ export const TwoColumnCardBlockComponent: React.FC<
           (d) => d.id !== descId,
         );
         return { ...card, descriptions: newDescriptions };
+      }
+      return card;
+    });
+    onUpdate({ ...block, cards: updatedCards });
+  };
+
+  const handleAddButton = (cardId: string) => {
+    const updatedCards = block.cards.map((card) => {
+      if (card.id === cardId) {
+        return {
+          ...card,
+          button: {
+            text: "Click me",
+            link: "#",
+            backgroundColor: "#FF6A00",
+            textColor: "#ffffff",
+            borderRadius: 4,
+            padding: 12,
+          },
+        };
+      }
+      return card;
+    });
+    onUpdate({ ...block, cards: updatedCards });
+  };
+
+  const handleOpenButtonEditor = (cardId: string) => {
+    const card = block.cards.find((c) => c.id === cardId);
+    if (card?.button) {
+      setButtonEditForm({
+        text: card.button.text,
+        link: card.button.link || "#",
+        backgroundColor: card.button.backgroundColor,
+        textColor: card.button.textColor,
+      });
+      setEditingButtonCardId(cardId);
+    }
+  };
+
+  const handleUpdateButton = (
+    cardId: string,
+    updates: Partial<{
+      text: string;
+      link: string;
+      backgroundColor: string;
+      textColor: string;
+      borderRadius: number;
+      padding: number;
+    }>,
+  ) => {
+    const updatedCards = block.cards.map((card) => {
+      if (card.id === cardId && card.button) {
+        return {
+          ...card,
+          button: { ...card.button, ...updates },
+        };
+      }
+      return card;
+    });
+    onUpdate({ ...block, cards: updatedCards });
+  };
+
+  const handleDeleteButton = (cardId: string) => {
+    const updatedCards = block.cards.map((card) => {
+      if (card.id === cardId) {
+        return {
+          ...card,
+          button: undefined,
+        };
       }
       return card;
     });
@@ -515,7 +600,7 @@ export const TwoColumnCardBlockComponent: React.FC<
                 </div>
 
                 {/* Descriptions */}
-                <div className="space-y-2">
+                <div className="space-y-2 mb-3">
                   {descriptions.map((desc) => (
                     <div
                       key={desc.id}
@@ -589,11 +674,219 @@ export const TwoColumnCardBlockComponent: React.FC<
                     </div>
                   ))}
                 </div>
+
+                {/* Button */}
+                <div className="flex flex-col gap-2">
+                  {card.button ? (
+                    <>
+                      <button
+                        style={{
+                          backgroundColor: card.button.backgroundColor,
+                          color: card.button.textColor,
+                          borderRadius: `${card.button.borderRadius}px`,
+                          padding: `${card.button.padding}px ${card.button.padding * 2}px`,
+                          border: "none",
+                          cursor: "pointer",
+                          fontSize: "14px",
+                          fontWeight: "500",
+                        }}
+                        onMouseEnter={() =>
+                          setHoveredFieldId(`button-${card.id}`)
+                        }
+                        onMouseLeave={() => setHoveredFieldId(null)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setFocusedFieldId(`button-${card.id}`);
+                        }}
+                        onDoubleClick={(e) => {
+                          e.stopPropagation();
+                          handleOpenButtonEditor(card.id);
+                        }}
+                        title="Double-click to edit button"
+                      >
+                        {card.button.text}
+                      </button>
+                      {focusedFieldId === `button-${card.id}` && (
+                        <div className="flex items-center gap-1 bg-white border border-gray-200 rounded-lg p-2 shadow-sm w-fit">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 px-2 text-xs hover:bg-gray-100"
+                            title="Edit button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleOpenButtonEditor(card.id);
+                            }}
+                          >
+                            Edit
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-7 w-7 p-0 hover:bg-red-100"
+                            title="Delete button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteButton(card.id);
+                              setFocusedFieldId(null);
+                            }}
+                          >
+                            <Trash2 className="w-3 h-3 text-red-600" />
+                          </Button>
+                        </div>
+                      )}
+                    </>
+                  ) : (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full text-xs"
+                      onClick={() => handleAddButton(card.id)}
+                    >
+                      <Plus className="w-4 h-4 mr-1" />
+                      Add Button
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
           );
         })}
       </div>
+
+      {/* Button Editor Dialog */}
+      <Dialog
+        open={!!editingButtonCardId}
+        onOpenChange={(open) => {
+          if (!open) setEditingButtonCardId(null);
+        }}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Edit Button</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <label className="text-sm font-medium text-gray-700 block mb-1">
+                Button Text
+              </label>
+              <Input
+                value={buttonEditForm.text}
+                onChange={(e) =>
+                  setButtonEditForm({
+                    ...buttonEditForm,
+                    text: e.target.value,
+                  })
+                }
+                placeholder="Click me"
+                className="w-full"
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-medium text-gray-700 block mb-1">
+                Button Link
+              </label>
+              <Input
+                value={buttonEditForm.link}
+                onChange={(e) =>
+                  setButtonEditForm({
+                    ...buttonEditForm,
+                    link: e.target.value,
+                  })
+                }
+                placeholder="https://example.com"
+                className="w-full"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-sm font-medium text-gray-700 block mb-1">
+                  Background Color
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="color"
+                    value={buttonEditForm.backgroundColor}
+                    onChange={(e) =>
+                      setButtonEditForm({
+                        ...buttonEditForm,
+                        backgroundColor: e.target.value,
+                      })
+                    }
+                    className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
+                  />
+                  <Input
+                    value={buttonEditForm.backgroundColor}
+                    onChange={(e) =>
+                      setButtonEditForm({
+                        ...buttonEditForm,
+                        backgroundColor: e.target.value,
+                      })
+                    }
+                    className="flex-1"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm font-medium text-gray-700 block mb-1">
+                  Text Color
+                </label>
+                <div className="flex gap-2">
+                  <input
+                    type="color"
+                    value={buttonEditForm.textColor}
+                    onChange={(e) =>
+                      setButtonEditForm({
+                        ...buttonEditForm,
+                        textColor: e.target.value,
+                      })
+                    }
+                    className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
+                  />
+                  <Input
+                    value={buttonEditForm.textColor}
+                    onChange={(e) =>
+                      setButtonEditForm({
+                        ...buttonEditForm,
+                        textColor: e.target.value,
+                      })
+                    }
+                    className="flex-1"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setEditingButtonCardId(null)}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                if (editingButtonCardId) {
+                  handleUpdateButton(editingButtonCardId, {
+                    text: buttonEditForm.text,
+                    link: buttonEditForm.link,
+                    backgroundColor: buttonEditForm.backgroundColor,
+                    textColor: buttonEditForm.textColor,
+                  });
+                  setEditingButtonCardId(null);
+                }
+              }}
+              className="bg-valasys-orange hover:bg-orange-600"
+            >
+              Save
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

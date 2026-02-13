@@ -500,6 +500,14 @@ export interface TwoColumnCardBlock {
     descriptions?: { id: string; content: string }[];
     title?: string; // Legacy support
     description?: string; // Legacy support
+    button?: {
+      text: string;
+      link?: string;
+      backgroundColor: string;
+      textColor: string;
+      borderRadius: number;
+      padding: number;
+    };
     backgroundColor: string;
     textColor: string;
     borderRadius: number;
