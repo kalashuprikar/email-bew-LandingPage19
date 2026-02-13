@@ -970,36 +970,6 @@ export const SplitImageCardBlockComponent: React.FC<
           </Button>
         </div>
       </div>
-
-      {/* Block Actions */}
-      {isSelected && (onDuplicate || onDelete) && (
-        <div className="flex items-center justify-center gap-2 mt-4 py-2">
-          {onDuplicate && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 px-3 hover:bg-gray-100 border border-gray-200"
-              title="Duplicate this card block"
-              onClick={() => onDuplicate(block, blockIndex + 1)}
-            >
-              <Copy className="w-4 h-4 mr-2" />
-              Copy
-            </Button>
-          )}
-          {onDelete && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-8 px-3 hover:bg-red-50 border border-red-200"
-              title="Delete this card block"
-              onClick={() => onDelete(block.id)}
-            >
-              <Trash2 className="w-4 h-4 mr-2 text-red-600" />
-              Delete
-            </Button>
-          )}
-        </div>
-      )}
     </div>
   );
 };
