@@ -47,9 +47,10 @@ export const EmailCanvas: React.FC<EmailCanvasProps> = ({
   const [{ isOver }, drop] = useDrop(() => ({
     accept: ["block", "template"],
     drop: (item: any, monitor) => {
-      // Check if drop was handled by a nested drop zone
-      if (monitor.didDrop()) {
-        return; // A nested drop zone already handled it
+      // Only process if this is a direct drop on the canvas, not on a nested element
+      const didDropInNestedZone = monitor.didDrop();
+      if (didDropInNestedZone) {
+        return; // A nested drop zone (like CardDropZone) already handled it
       }
 
       if (item.blocks) {

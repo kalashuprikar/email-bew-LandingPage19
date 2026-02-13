@@ -62,8 +62,12 @@ const CardDropZone: React.FC<CardDropZoneProps> = ({
   return (
     <div
       ref={ref}
-      className="mt-3 pt-2 border-t border-gray-200 relative z-10"
+      className="mt-3 pt-2 border-t border-gray-200 relative z-50 pointer-events-auto"
       onClick={(e) => e.stopPropagation()}
+      onDragOver={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      }}
     >
       {blocks && blocks.length > 0 ? (
         <div className="space-y-3 mt-2">
