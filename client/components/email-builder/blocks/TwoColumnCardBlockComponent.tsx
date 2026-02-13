@@ -61,17 +61,50 @@ const CardDropZone: React.FC<CardDropZoneProps> = ({
       onClick={(e) => e.stopPropagation()}
     >
       {blocks && blocks.length > 0 ? (
-        <div className="space-y-2">
+        <div className="space-y-3 mt-2">
           {blocks.map((block) => (
             <div
               key={block.id}
-              className="flex items-center justify-between bg-gray-50 p-2 rounded border border-gray-200 group"
+              className="relative group bg-white p-3 rounded border border-gray-200 hover:border-valasys-orange transition-colors"
             >
-              <span className="text-sm text-gray-700">{block.type}</span>
+              {/* Render block based on type */}
+              {block.type === "button" && (
+                <button
+                  style={{
+                    backgroundColor: (block as any).backgroundColor || "#FF6A00",
+                    color: (block as any).textColor || "#ffffff",
+                    padding: "8px 16px",
+                    borderRadius: "4px",
+                    border: "none",
+                    cursor: "pointer",
+                    fontSize: "14px",
+                    fontWeight: "500",
+                  }}
+                >
+                  {(block as any).text || "Button"}
+                </button>
+              )}
+              {block.type === "text" && (
+                <p className="text-sm text-gray-700">
+                  {(block as any).content || "Text block"}
+                </p>
+              )}
+              {block.type === "image" && (
+                <div className="w-full h-32 bg-gray-100 rounded flex items-center justify-center text-xs text-gray-500">
+                  Image: {(block as any).alt || "Image block"}
+                </div>
+              )}
+              {!["button", "text", "image"].includes(block.type) && (
+                <div className="text-sm text-gray-500 p-2 bg-gray-50 rounded">
+                  {block.type} block
+                </div>
+              )}
+
+              {/* Delete button */}
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 hover:bg-red-50"
+                className="absolute -top-2 -right-2 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 hover:bg-red-50 bg-white border border-red-200"
                 onClick={(e) => {
                   e.stopPropagation();
                   onDeleteBlock(block.id);
