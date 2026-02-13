@@ -21,11 +21,12 @@ export const LogoBlockComponent: React.FC<LogoBlockComponentProps> = ({
       }`}
       style={{
         padding: `${(block as any).padding || 16}px`,
-        display: "block",
+        display: isInlineDisplay ? "inline-block" : "block",
         width: isInlineDisplay ? "auto" : "100%",
+        verticalAlign: "top",
       }}
     >
-      <div style={{ textAlign: "center" }}>
+      <div style={{ textAlign: isInlineDisplay ? "left" : "center" }}>
         {block.src ? (
           <img
             src={block.src}

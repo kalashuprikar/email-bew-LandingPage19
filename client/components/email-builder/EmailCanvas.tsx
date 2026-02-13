@@ -190,12 +190,13 @@ export const EmailCanvas: React.FC<EmailCanvasProps> = ({
                       )}
                       style={{
                         display: "flex",
-                        flexDirection: "column",
+                        flexDirection: "row",
                         alignItems: "center",
+                        justifyContent: "space-between",
                         gap: "0",
                       }}>
                         {inlineBlocks.map((inlineBlock, i) => (
-                          <div key={inlineBlock.id} className="w-full" onClick={(e) => e.stopPropagation()}>
+                          <div key={inlineBlock.id} className="inline-block" onClick={(e) => e.stopPropagation()}>
                             <DraggableBlock
                               block={inlineBlock}
                               index={index + i}
