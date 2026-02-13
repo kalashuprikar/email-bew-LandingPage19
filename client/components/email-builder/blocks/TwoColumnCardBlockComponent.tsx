@@ -28,29 +28,38 @@ const CardDropZone: React.FC<CardDropZoneProps> = ({
   onAddBlock,
   onDeleteBlock,
 }) => {
-  const [{ isOver }, drop] = useDrop(() => ({
-    accept: ["block", "template"],
-    drop: (item: any) => {
-      if (item.blocks) {
-        // Template - add all blocks
-        item.blocks.forEach((block: ContentBlock) => {
-          onAddBlock(block);
-        });
-      } else if (item.block) {
-        // Single block
-        onAddBlock(item.block);
-      }
-    },
-    collect: (monitor) => ({
-      isOver: !!monitor.isOver(),
+  const [{ isOver }, drop] = useDrop(
+    () => ({
+      accept: ["block", "template"],
+      drop: (item: any) => {
+        // Stop propagation to parent drop zones
+        if (item.blocks) {
+          // Template - add all blocks
+          item.blocks.forEach((block: ContentBlock) => {
+            onAddBlock(block);
+          });
+        } else if (item.block) {
+          // Single block - clone it so it doesn't affect original
+          onAddBlock({ ...item.block, id: `block-${Date.now()}-${Math.random().toString(36).substr(2, 9)}` });
+        }
+        return { handled: true }; // Signal that drop was handled
+      },
+      collect: (monitor) => ({
+        isOver: !!monitor.isOver(),
+      }),
     }),
-  }));
+    []
+  );
 
   const ref = useRef<HTMLDivElement>(null);
   drop(ref);
 
   return (
-    <div ref={ref} className="mt-3 pt-2 border-t border-gray-200">
+    <div
+      ref={ref}
+      className="mt-3 pt-2 border-t border-gray-200 relative z-10"
+      onClick={(e) => e.stopPropagation()}
+    >
       {blocks && blocks.length > 0 ? (
         <div className="space-y-2">
           {blocks.map((block) => (
@@ -63,7 +72,10 @@ const CardDropZone: React.FC<CardDropZoneProps> = ({
                 variant="ghost"
                 size="sm"
                 className="h-6 w-6 p-0 opacity-0 group-hover:opacity-100 hover:bg-red-50"
-                onClick={() => onDeleteBlock(block.id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDeleteBlock(block.id);
+                }}
               >
                 <Trash2 className="w-3 h-3 text-red-600" />
               </Button>
@@ -72,16 +84,15 @@ const CardDropZone: React.FC<CardDropZoneProps> = ({
         </div>
       ) : (
         <div
-          className={`text-center py-4 border-2 border-dashed rounded transition-colors ${
+          className={`text-center py-6 border-2 border-dashed rounded transition-colors pointer-events-auto ${
             isOver
               ? "border-valasys-orange bg-orange-50"
               : "border-gray-300 bg-gray-50"
           }`}
+          onClick={(e) => e.stopPropagation()}
         >
           <p className="text-xs text-gray-500">
-            {isOver
-              ? "Drop block here"
-              : "Drag blocks here to add to card"}
+            {isOver ? "Drop block here" : "Drag blocks here to add to card"}
           </p>
         </div>
       )}
