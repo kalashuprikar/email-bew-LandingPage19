@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect, useMemo } from "react";
 import { useDrop } from "react-dnd";
 import { TwoColumnCardBlock, ContentBlock } from "../types";
+import { BlockRenderer } from "../BlockRenderer";
 import { Upload, Trash2, Plus, Copy, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -20,6 +21,9 @@ interface CardDropZoneProps {
   blocks: ContentBlock[];
   onAddBlock: (block: ContentBlock) => void;
   onDeleteBlock: (blockId: string) => void;
+  onUpdateBlock?: (block: ContentBlock) => void;
+  selectedBlockId?: string | null;
+  onSelectBlock?: (blockId: string) => void;
 }
 
 const CardDropZone: React.FC<CardDropZoneProps> = ({
@@ -27,6 +31,7 @@ const CardDropZone: React.FC<CardDropZoneProps> = ({
   blocks,
   onAddBlock,
   onDeleteBlock,
+  onUpdateBlock,
 }) => {
   const [{ isOver }, drop] = useDrop(
     () => ({
@@ -65,53 +70,17 @@ const CardDropZone: React.FC<CardDropZoneProps> = ({
           {blocks.map((block) => (
             <div
               key={block.id}
-              className="relative group bg-white p-3 rounded border border-gray-200 hover:border-valasys-orange transition-colors"
+              className="relative group"
             >
-              {/* Render block based on type */}
-              {block.type === "button" && (
-                <button
-                  style={{
-                    backgroundColor: (block as any).backgroundColor || "#FF6A00",
-                    color: (block as any).textColor || "#ffffff",
-                    padding: "8px 16px",
-                    borderRadius: "4px",
-                    border: "none",
-                    cursor: "pointer",
-                    fontSize: "14px",
-                    fontWeight: "500",
-                  }}
-                >
-                  {(block as any).text || "Button"}
-                </button>
-              )}
-              {block.type === "text" && (
-                <p className="text-sm text-gray-700">
-                  {(block as any).content || "Text block"}
-                </p>
-              )}
-              {block.type === "image" && (
-                <div className="w-full h-32 bg-gray-100 rounded flex items-center justify-center text-xs text-gray-500">
-                  Image: {(block as any).alt || "Image block"}
-                </div>
-              )}
-              {!["button", "text", "image"].includes(block.type) && (
-                <div className="text-sm text-gray-500 p-2 bg-gray-50 rounded">
-                  {block.type} block
-                </div>
-              )}
-
-              {/* Delete button */}
-              <Button
-                variant="ghost"
-                size="sm"
-                className="absolute -top-2 -right-2 h-6 w-6 p-0 opacity-0 group-hover:opacity-100 hover:bg-red-50 bg-white border border-red-200"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDeleteBlock(block.id);
+              <BlockRenderer
+                block={block}
+                isSelected={false}
+                onBlockUpdate={(updatedBlock) => {
+                  onUpdateBlock?.(updatedBlock);
                 }}
-              >
-                <Trash2 className="w-3 h-3 text-red-600" />
-              </Button>
+                onDelete={(blockId) => onDeleteBlock(blockId)}
+                blockIndex={0}
+              />
             </div>
           ))}
         </div>
@@ -319,6 +288,21 @@ export const TwoColumnCardBlockComponent: React.FC<
         return {
           ...card,
           blocks: (card.blocks || []).filter((b) => b.id !== blockId),
+        };
+      }
+      return card;
+    });
+    onUpdate({ ...block, cards: updatedCards });
+  };
+
+  const handleUpdateBlockInCard = (cardId: string, updatedBlock: ContentBlock) => {
+    const updatedCards = block.cards.map((card) => {
+      if (card.id === cardId) {
+        return {
+          ...card,
+          blocks: (card.blocks || []).map((b) =>
+            b.id === updatedBlock.id ? updatedBlock : b
+          ),
         };
       }
       return card;
@@ -895,6 +879,9 @@ export const TwoColumnCardBlockComponent: React.FC<
                   }
                   onDeleteBlock={(blockId) =>
                     handleDeleteBlockFromCard(card.id, blockId)
+                  }
+                  onUpdateBlock={(updatedBlock) =>
+                    handleUpdateBlockInCard(card.id, updatedBlock)
                   }
                 />
               </div>
