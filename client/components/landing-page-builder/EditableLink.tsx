@@ -48,7 +48,7 @@ export const EditableLink: React.FC<EditableLinkProps> = ({
           if (e.key === 'Enter') handleSave();
           if (e.key === 'Escape') handleCancel();
         }}
-        className="text-xs px-3 py-2 border border-solid border-valasys-orange rounded-full bg-white focus:outline-none w-28 z-50"
+        className="text-xs px-3 py-2 border border-solid border-orange-300 rounded-full bg-white focus:outline-none w-28 z-50"
         autoFocus
       />
     );
@@ -61,8 +61,8 @@ export const EditableLink: React.FC<EditableLinkProps> = ({
         setIsEditing(true);
       }}
       className={`cursor-pointer px-3 py-2 rounded-full transition-all ${
-        isHovered ? "border border-dashed border-valasys-orange" : ""
-      } ${isSelected ? "font-semibold text-valasys-orange" : ""}`}
+        isHovered ? "border border-dashed border-orange-300" : ""
+      } ${isSelected ? "font-semibold text-orange-400" : ""}`}
       title="Click to edit"
     >
       {inline ? <span>{label}</span> : <a href={href}>{label}</a>}

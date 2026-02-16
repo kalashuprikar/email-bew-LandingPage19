@@ -197,9 +197,9 @@ const DragItem: React.FC<{
         isDragging ? "opacity-50" : ""
       } ${
         isSelected
-          ? "border-[0.5px] border-solid border-valasys-orange"
+          ? "border-[0.5px] border-solid border-orange-300"
           : isHovered
-            ? "border border-dashed border-valasys-orange"
+            ? "border border-dashed border-orange-300"
             : ""
       }`}
       onMouseEnter={() => setIsHovered(true)}
@@ -209,7 +209,7 @@ const DragItem: React.FC<{
 
       {isSelected && (
         <>
-          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 flex gap-2 bg-white rounded-full shadow-lg border border-valasys-orange p-2 z-20">
+          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 flex gap-2 bg-white rounded-full shadow-lg border border-orange-300 p-2 z-20">
           <Button
             size="sm"
             variant="ghost"

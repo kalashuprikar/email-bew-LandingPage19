@@ -31,7 +31,7 @@ export const HeaderBlockPreview: React.FC<BlockPreviewProps> = ({
     <div
       onClick={onSelect}
       className={`bg-white border border-gray-200 cursor-pointer transition-all ${
-        isSelected ? "border-valasys-orange" : "hover:border-gray-300"
+        isSelected ? "border-orange-300" : "hover:border-gray-300"
       }`}
     >
       <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gray-50">
@@ -396,9 +396,9 @@ export const SpacerBlockPreview: React.FC<BlockPreviewProps> = ({
     <div
       onClick={onSelect}
       style={{ height: props.height || "60px" }}
-      className={`border-2 border-dashed cursor-pointer transition-all ${
+      className={`border border-dashed cursor-pointer transition-all ${
         isSelected
-          ? "border-valasys-orange bg-orange-50"
+          ? "border-orange-300 bg-orange-50"
           : "border-gray-300 bg-gray-50"
       }`}
     />
