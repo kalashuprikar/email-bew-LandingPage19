@@ -183,6 +183,8 @@ const DragItem: React.FC<{
     }
   };
 
+  const [isHovered, setIsHovered] = React.useState(false);
+
   return (
     <div
       ref={ref}
@@ -191,16 +193,19 @@ const DragItem: React.FC<{
         isDragging ? "opacity-50" : ""
       } ${
         isSelected
-          ? "ring-2 ring-valasys-orange shadow-lg"
-          : "hover:shadow-md"
+          ? "border-2 border-solid border-valasys-orange shadow-lg"
+          : isHovered
+            ? "border-2 border-dashed border-gray-400"
+            : "border-2 border-transparent"
       }`}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
       <div onClick={onSelect}>{blockContent}</div>
 
       {isSelected && (
         <>
-          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-valasys-orange to-orange-400 rounded-t-lg z-10"></div>
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2 bg-white rounded-full shadow-lg p-2 z-20">
+          <div className="absolute top-0 right-2 transform -translate-y-1/2 flex gap-2 bg-white rounded-full shadow-lg border border-valasys-orange p-2 z-20">
           <Button
             size="sm"
             variant="ghost"
