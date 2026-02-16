@@ -35,7 +35,16 @@ export const HeaderBlockPreview: React.FC<BlockPreviewProps> = ({
       }`}
     >
       <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gray-50">
-        <div className="font-bold text-gray-900">{props.logoText}</div>
+        <div className="flex items-center gap-3">
+          {props.logoUrl && (
+            <img
+              src={props.logoUrl}
+              alt="Logo"
+              className="h-8 object-contain"
+            />
+          )}
+          <div className="font-bold text-gray-900">{props.logoText}</div>
+        </div>
         <div className="flex gap-4 text-sm text-gray-600">
           {props.navigationLinks?.map((link: any, i: number) => (
             <div

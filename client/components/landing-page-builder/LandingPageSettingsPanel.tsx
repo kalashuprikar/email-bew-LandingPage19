@@ -157,6 +157,24 @@ export const LandingPageSettingsPanel: React.FC<
       </div>
 
       <div>
+        <Label className="text-sm font-medium">Logo Image URL</Label>
+        <Input
+          value={localProps.logoUrl || ""}
+          onChange={(e) => updateProperty("logoUrl", e.target.value)}
+          placeholder="Image URL"
+        />
+        {localProps.logoUrl && (
+          <div className="mt-2 rounded border border-gray-200 p-2">
+            <img
+              src={localProps.logoUrl}
+              alt="Logo preview"
+              className="max-h-12 object-contain"
+            />
+          </div>
+        )}
+      </div>
+
+      <div>
         <Label className="text-sm font-medium mb-2 block">
           Navigation Links
         </Label>
