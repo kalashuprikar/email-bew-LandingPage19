@@ -193,7 +193,7 @@ const DragItem: React.FC<{
     <div
       ref={ref}
       data-handler-id={handlerId}
-      className={`relative transition-all rounded cursor-pointer group ${
+      className={`relative transition-all rounded cursor-pointer group mb-6 ${
         isDragging ? "opacity-50" : ""
       } ${
         isSelected
@@ -209,7 +209,7 @@ const DragItem: React.FC<{
 
       {isSelected && (
         <>
-          <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 flex gap-2 bg-white rounded-full shadow-lg border border-orange-300 p-2 z-20">
+          <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2 flex gap-2 bg-white rounded-full shadow-lg border border-orange-300 p-2 z-50">
           <Button
             size="sm"
             variant="ghost"

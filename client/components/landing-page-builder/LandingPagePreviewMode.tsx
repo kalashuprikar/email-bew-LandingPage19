@@ -49,34 +49,46 @@ export const LandingPagePreviewMode: React.FC<LandingPagePreviewModeProps> = ({
       onUpdate: () => {},
     };
 
-    switch (block.type) {
-      case "header":
-        return <HeaderBlockPreview key={block.id} {...blockProps} />;
-      case "hero":
-        return <HeroBlockPreview key={block.id} {...blockProps} />;
-      case "features":
-        return <FeaturesBlockPreview key={block.id} {...blockProps} />;
-      case "testimonials":
-        return <TestimonialsBlockPreview key={block.id} {...blockProps} />;
-      case "about":
-        return <AboutBlockPreview key={block.id} {...blockProps} />;
-      case "contact-form":
-        return <ContactFormBlockPreview key={block.id} {...blockProps} />;
-      case "footer":
-        return <FooterBlockPreview key={block.id} {...blockProps} />;
-      case "section-spacer":
-        return <SpacerBlockPreview key={block.id} {...blockProps} />;
-      case "pricing":
-        return <PricingBlockPreview key={block.id} {...blockProps} />;
-      case "faq":
-        return <FaqBlockPreview key={block.id} {...blockProps} />;
-      case "signup":
-        return <SignupBlockPreview key={block.id} {...blockProps} />;
-      case "pricing-footer":
-        return <PricingFooterBlockPreview key={block.id} {...blockProps} />;
-      default:
-        return <div key={block.id}>Unknown block type</div>;
+    const Component = (() => {
+      switch (block.type) {
+        case "header":
+          return HeaderBlockPreview;
+        case "hero":
+          return HeroBlockPreview;
+        case "features":
+          return FeaturesBlockPreview;
+        case "testimonials":
+          return TestimonialsBlockPreview;
+        case "about":
+          return AboutBlockPreview;
+        case "contact-form":
+          return ContactFormBlockPreview;
+        case "footer":
+          return FooterBlockPreview;
+        case "section-spacer":
+          return SpacerBlockPreview;
+        case "pricing":
+          return PricingBlockPreview;
+        case "faq":
+          return FaqBlockPreview;
+        case "signup":
+          return SignupBlockPreview;
+        case "pricing-footer":
+          return PricingFooterBlockPreview;
+        default:
+          return null;
+      }
+    })();
+
+    if (!Component) {
+      return <div key={block.id}>Unknown block type</div>;
     }
+
+    return (
+      <div key={block.id} className="w-full">
+        <Component {...blockProps} />
+      </div>
+    );
   };
 
   return (
@@ -122,7 +134,7 @@ export const LandingPagePreviewMode: React.FC<LandingPagePreviewModeProps> = ({
       </div>
 
       {/* Preview Area */}
-      <div className="flex-1 overflow-y-auto bg-gray-900 flex items-start justify-center p-8">
+      <div className="flex-1 overflow-y-auto bg-gray-900 flex items-start justify-center p-4 md:p-8">
         <div
           style={{
             width: getDeviceWidth(),
@@ -131,8 +143,9 @@ export const LandingPagePreviewMode: React.FC<LandingPagePreviewModeProps> = ({
             boxShadow: "0 10px 40px rgba(0, 0, 0, 0.3)",
             overflow: "hidden",
           }}
+          className="flex-shrink-0"
         >
-          <div className="flex flex-col gap-0">
+          <div className="flex flex-col gap-0 w-full">
             {page.blocks.map((block) => renderBlock(block))}
           </div>
         </div>
