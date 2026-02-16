@@ -331,34 +331,49 @@ export const LandingPageSettingsPanel: React.FC<
 
       <div>
         <Label className="text-sm font-medium">Width</Label>
-        <Input
-          type="text"
-          value={localProps.width || "100%"}
-          onChange={(e) => {
-            const val = e.target.value;
-            if (val.trim()) {
-              updateProperty("width", val);
-            }
-          }}
-          placeholder="100% or 1200px"
-        />
-        <p className="text-xs text-gray-500 mt-1">Enter as percentage (100%) or pixels (1200px)</p>
+        <div className="flex gap-2">
+          <Input
+            type="number"
+            value={parseInt(localProps.width) || 100}
+            onChange={(e) => {
+              const num = e.target.value;
+              const unit = (localProps.width || "100%").includes("%") ? "%" : "px";
+              updateProperty("width", `${num}${unit}`);
+            }}
+            placeholder="100"
+            className="flex-1"
+          />
+          <select
+            value={(localProps.width || "100%").includes("%") ? "%" : "px"}
+            onChange={(e) => {
+              const num = parseInt(localProps.width) || 100;
+              updateProperty("width", `${num}${e.target.value}`);
+            }}
+            className="px-3 py-2 border border-input rounded-md bg-background text-sm"
+          >
+            <option value="%">%</option>
+            <option value="px">px</option>
+          </select>
+        </div>
       </div>
 
       <div>
         <Label className="text-sm font-medium">Min Height</Label>
-        <Input
-          type="text"
-          value={localProps.minHeight || "500px"}
-          onChange={(e) => {
-            const val = e.target.value;
-            if (val.trim()) {
-              updateProperty("minHeight", val);
-            }
-          }}
-          placeholder="500px"
-        />
-        <p className="text-xs text-gray-500 mt-1">Enter in pixels (e.g., 500px, 600px)</p>
+        <div className="flex gap-2">
+          <Input
+            type="number"
+            value={parseInt(localProps.minHeight) || 500}
+            onChange={(e) => {
+              const num = e.target.value;
+              updateProperty("minHeight", `${num}px`);
+            }}
+            placeholder="500"
+            className="flex-1"
+          />
+          <div className="px-3 py-2 border border-input rounded-md bg-background text-sm flex items-center text-gray-500">
+            px
+          </div>
+        </div>
       </div>
 
       <div>
