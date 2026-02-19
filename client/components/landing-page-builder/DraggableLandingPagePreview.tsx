@@ -263,8 +263,8 @@ const DragItem: React.FC<{
         isSelected
           ? "border-2 border-solid border-valasys-orange shadow-lg shadow-orange-200"
           : isHovered
-            ? "border-2 border-dashed border-valasys-orange"
-            : ""
+            ? "border-2 border-dotted border-valasys-orange"
+            : "border-2 border-transparent"
       }`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
