@@ -192,6 +192,21 @@ export const HeroBlockPreview: React.FC<BlockPreviewProps> = ({
   const [hoveredElement, setHoveredElement] = React.useState<"heading" | "subheading" | "button" | null | string>(null);
   const [selectedCopyElement, setSelectedCopyElement] = React.useState<string | null>(null);
 
+  // Element order management - default order is heading, subheading, button
+  const elementOrder = props.elementOrder || ["heading", "subheading", "button"];
+
+  const handleElementDrop = (draggedElementId: string, targetElementId: string) => {
+    const draggedIdx = elementOrder.indexOf(draggedElementId as any);
+    const targetIdx = elementOrder.indexOf(targetElementId as any);
+
+    if (draggedIdx !== -1 && targetIdx !== -1 && draggedIdx !== targetIdx) {
+      const newOrder = [...elementOrder];
+      newOrder.splice(draggedIdx, 1);
+      newOrder.splice(targetIdx, 0, draggedElementId as any);
+      onUpdate?.({ ...props, elementOrder: newOrder });
+    }
+  };
+
   const handleHeadlineSave = () => {
     if (editHeadingText.trim()) {
       onUpdate?.({ ...props, headline: editHeadingText });
@@ -261,6 +276,223 @@ export const HeroBlockPreview: React.FC<BlockPreviewProps> = ({
     onElementSelect?.(null);
   };
 
+  const renderHeadingElement = () => (
+    <div
+      className={`relative mb-4 px-4 py-2 rounded transition-all cursor-move group ${
+        selectedElement === "heading" ? "border-2 border-solid border-valasys-orange" :
+        hoveredElement === "heading" ? "border-2 border-dashed border-valasys-orange" : ""
+      }`}
+      onMouseEnter={() => !isEditingHeading && setHoveredElement("heading")}
+      onMouseLeave={() => setHoveredElement(null)}
+      onClick={(e) => {
+        e.stopPropagation();
+        onElementSelect?.("heading");
+      }}
+    >
+      {isEditingHeading ? (
+        <input
+          type="text"
+          value={editHeadingText}
+          onChange={(e) => setEditHeadingText(e.target.value)}
+          onBlur={handleHeadlineSave}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") handleHeadlineSave();
+            if (e.key === "Escape") {
+              setEditHeadingText(props.headline || "");
+              setIsEditingHeading(false);
+            }
+          }}
+          onClick={(e) => e.stopPropagation()}
+          className="w-full text-2xl md:text-5xl font-bold text-gray-900 px-2 py-1 focus:outline-none bg-transparent"
+          autoFocus
+        />
+      ) : (
+        <h1
+          className="text-2xl md:text-5xl font-bold cursor-text"
+          style={{ color: props.headlineColor || "#1f2937" }}
+          onDoubleClick={(e) => {
+            e.stopPropagation();
+            setEditHeadingText(props.headline || "");
+            setIsEditingHeading(true);
+          }}
+        >
+          {props.headline}
+        </h1>
+      )}
+
+      {selectedElement === "heading" && (
+        <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 flex gap-1 bg-white rounded-lg border border-valasys-orange p-2 z-50 mt-2">
+          <button
+            className="h-8 w-8 p-0 hover:bg-orange-50 hover:text-valasys-orange transition-colors flex items-center justify-center rounded"
+            title="Copy heading"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleCopyHeading();
+            }}
+          >
+            <Copy className="w-4 h-4" />
+          </button>
+          <button
+            className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600 transition-colors flex items-center justify-center rounded"
+            title="Delete heading"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDeleteHeading();
+            }}
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+    </div>
+  );
+
+  const renderSubheadingElement = () => (
+    <div
+      className={`relative mb-8 px-4 py-2 rounded transition-all max-w-2xl cursor-move group ${
+        selectedElement === "subheading" ? "border-2 border-solid border-valasys-orange" :
+        hoveredElement === "subheading" ? "border-2 border-dashed border-valasys-orange" : ""
+      }`}
+      onMouseEnter={() => !isEditingSubheading && setHoveredElement("subheading")}
+      onMouseLeave={() => setHoveredElement(null)}
+      onClick={(e) => {
+        e.stopPropagation();
+        onElementSelect?.("subheading");
+      }}
+    >
+      {isEditingSubheading ? (
+        <input
+          type="text"
+          value={editSubheadingText}
+          onChange={(e) => setEditSubheadingText(e.target.value)}
+          onBlur={handleSubheadingSave}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") handleSubheadingSave();
+            if (e.key === "Escape") {
+              setEditSubheadingText(props.subheading || "");
+              setIsEditingSubheading(false);
+            }
+          }}
+          onClick={(e) => e.stopPropagation()}
+          className="w-full text-sm md:text-xl text-gray-600 px-2 py-1 focus:outline-none bg-transparent"
+          autoFocus
+        />
+      ) : (
+        <p
+          className="text-sm md:text-xl cursor-text"
+          style={{ color: props.subheadingColor || "#4b5563" }}
+          onDoubleClick={(e) => {
+            e.stopPropagation();
+            setEditSubheadingText(props.subheading || "");
+            setIsEditingSubheading(true);
+          }}
+        >
+          {props.subheading}
+        </p>
+      )}
+
+      {selectedElement === "subheading" && (
+        <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 flex gap-1 bg-white rounded-lg border border-valasys-orange p-2 z-50 mt-2">
+          <button
+            className="h-8 w-8 p-0 hover:bg-orange-50 hover:text-valasys-orange transition-colors flex items-center justify-center rounded"
+            title="Copy subheading"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleCopySubheading();
+            }}
+          >
+            <Copy className="w-4 h-4" />
+          </button>
+          <button
+            className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600 transition-colors flex items-center justify-center rounded"
+            title="Delete subheading"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDeleteSubheading();
+            }}
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+    </div>
+  );
+
+  const renderButtonElement = () => (
+    <div
+      className={`relative px-4 py-2 rounded transition-all cursor-move group ${
+        selectedElement === "button" ? "border-2 border-solid border-valasys-orange" :
+        hoveredElement === "button" ? "border-2 border-dashed border-valasys-orange" : ""
+      }`}
+      onMouseEnter={() => !isEditingButton && setHoveredElement("button")}
+      onMouseLeave={() => setHoveredElement(null)}
+      onClick={(e) => {
+        e.stopPropagation();
+        onElementSelect?.("button");
+      }}
+    >
+      {isEditingButton ? (
+        <input
+          type="text"
+          value={editButtonText}
+          onChange={(e) => setEditButtonText(e.target.value)}
+          onBlur={handleButtonSave}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") handleButtonSave();
+            if (e.key === "Escape") {
+              setEditButtonText(props.ctaButtonText || "");
+              setIsEditingButton(false);
+            }
+          }}
+          onClick={(e) => e.stopPropagation()}
+          className="px-6 md:px-8 py-2 md:py-3 rounded focus:outline-none text-sm md:text-base"
+          style={{ backgroundColor: props.ctaButtonColor || "#FF6A00", color: "white" }}
+          autoFocus
+        />
+      ) : (
+        <button
+          style={{
+            backgroundColor: props.ctaButtonColor,
+            color: props.ctaButtonTextColor || "#ffffff"
+          }}
+          className="px-6 md:px-8 py-2 md:py-3 font-medium rounded hover:opacity-90 transition-opacity text-sm md:text-base cursor-text"
+          onDoubleClick={(e) => {
+            e.stopPropagation();
+            setEditButtonText(props.ctaButtonText || "");
+            setIsEditingButton(true);
+          }}
+        >
+          {props.ctaButtonText}
+        </button>
+      )}
+
+      {selectedElement === "button" && (
+        <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 flex gap-1 bg-white rounded-lg border border-valasys-orange p-2 z-50 mt-2">
+          <button
+            className="h-8 w-8 p-0 hover:bg-orange-50 hover:text-valasys-orange transition-colors flex items-center justify-center rounded"
+            title="Copy button"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleCopyButton();
+            }}
+          >
+            <Copy className="w-4 h-4" />
+          </button>
+          <button
+            className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600 transition-colors flex items-center justify-center rounded"
+            title="Delete button"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDeleteButton();
+            }}
+          >
+            <Trash2 className="w-4 h-4" />
+          </button>
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <div
       onClick={onSelect}
@@ -283,76 +515,13 @@ export const HeroBlockPreview: React.FC<BlockPreviewProps> = ({
         />
       )}
       <div className="relative flex flex-col items-center justify-center h-full px-4 md:px-8 py-8 md:py-16 text-center" style={{ zIndex: 2 }}>
-        {/* Heading */}
-        <div
-          className={`relative mb-4 px-4 py-2 rounded transition-all ${
-            selectedElement === "heading" ? "border-2 border-solid border-valasys-orange" :
-            hoveredElement === "heading" ? "border-2 border-dashed border-valasys-orange" : ""
-          }`}
-          onMouseEnter={() => !isEditingHeading && setHoveredElement("heading")}
-          onMouseLeave={() => setHoveredElement(null)}
-          onClick={(e) => {
-            e.stopPropagation();
-            setSelectedElement("heading");
-            onElementSelect?.("heading");
-          }}
-        >
-          {isEditingHeading ? (
-            <input
-              type="text"
-              value={editHeadingText}
-              onChange={(e) => setEditHeadingText(e.target.value)}
-              onBlur={handleHeadlineSave}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleHeadlineSave();
-                if (e.key === "Escape") {
-                  setEditHeadingText(props.headline || "");
-                  setIsEditingHeading(false);
-                }
-              }}
-              onClick={(e) => e.stopPropagation()}
-              className="w-full text-2xl md:text-5xl font-bold text-gray-900 px-2 py-1 focus:outline-none bg-transparent"
-              autoFocus
-            />
-          ) : (
-            <h1
-              className="text-2xl md:text-5xl font-bold cursor-text"
-              style={{ color: props.headlineColor || "#1f2937" }}
-              onDoubleClick={(e) => {
-                e.stopPropagation();
-                setEditHeadingText(props.headline || "");
-                setIsEditingHeading(true);
-              }}
-            >
-              {props.headline}
-            </h1>
-          )}
-
-          {selectedElement === "heading" && (
-            <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 flex gap-1 bg-white rounded-lg border border-valasys-orange p-2 z-50 mt-2">
-              <button
-                className="h-8 w-8 p-0 hover:bg-orange-50 hover:text-valasys-orange transition-colors flex items-center justify-center rounded"
-                title="Copy heading"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleCopyHeading();
-                }}
-              >
-                <Copy className="w-4 h-4" />
-              </button>
-              <button
-                className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600 transition-colors flex items-center justify-center rounded"
-                title="Delete heading"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDeleteHeading();
-                }}
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
-            </div>
-          )}
-        </div>
+        {/* Dynamically render elements in order */}
+        {elementOrder.map((elementType) => {
+          if (elementType === "heading") return <React.Fragment key="heading">{renderHeadingElement()}</React.Fragment>;
+          if (elementType === "subheading") return <React.Fragment key="subheading">{renderSubheadingElement()}</React.Fragment>;
+          if (elementType === "button") return <React.Fragment key="button">{renderButtonElement()}</React.Fragment>;
+          return null;
+        })}
 
         {/* Additional Copied Headlines */}
         {props.headlines?.map((heading: any, idx: number) => (
@@ -401,77 +570,6 @@ export const HeroBlockPreview: React.FC<BlockPreviewProps> = ({
           </div>
         ))}
 
-        {/* Subheading */}
-        <div
-          className={`relative mb-8 px-4 py-2 rounded transition-all max-w-2xl ${
-            selectedElement === "subheading" ? "border-2 border-solid border-valasys-orange" :
-            hoveredElement === "subheading" ? "border-2 border-dashed border-valasys-orange" : ""
-          }`}
-          onMouseEnter={() => !isEditingSubheading && setHoveredElement("subheading")}
-          onMouseLeave={() => setHoveredElement(null)}
-          onClick={(e) => {
-            e.stopPropagation();
-            setSelectedElement("subheading");
-            onElementSelect?.("subheading");
-          }}
-        >
-          {isEditingSubheading ? (
-            <input
-              type="text"
-              value={editSubheadingText}
-              onChange={(e) => setEditSubheadingText(e.target.value)}
-              onBlur={handleSubheadingSave}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleSubheadingSave();
-                if (e.key === "Escape") {
-                  setEditSubheadingText(props.subheading || "");
-                  setIsEditingSubheading(false);
-                }
-              }}
-              onClick={(e) => e.stopPropagation()}
-              className="w-full text-sm md:text-xl text-gray-600 px-2 py-1 focus:outline-none bg-transparent"
-              autoFocus
-            />
-          ) : (
-            <p
-              className="text-sm md:text-xl cursor-text"
-              style={{ color: props.subheadingColor || "#4b5563" }}
-              onDoubleClick={(e) => {
-                e.stopPropagation();
-                setEditSubheadingText(props.subheading || "");
-                setIsEditingSubheading(true);
-              }}
-            >
-              {props.subheading}
-            </p>
-          )}
-
-          {selectedElement === "subheading" && (
-            <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 flex gap-1 bg-white rounded-lg border border-valasys-orange p-2 z-50 mt-2">
-              <button
-                className="h-8 w-8 p-0 hover:bg-orange-50 hover:text-valasys-orange transition-colors flex items-center justify-center rounded"
-                title="Copy subheading"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleCopySubheading();
-                }}
-              >
-                <Copy className="w-4 h-4" />
-              </button>
-              <button
-                className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600 transition-colors flex items-center justify-center rounded"
-                title="Delete subheading"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDeleteSubheading();
-                }}
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
-            </div>
-          )}
-        </div>
-
         {/* Additional Copied Subheadings */}
         {props.subheadings?.map((subheading: any, idx: number) => (
           <div
@@ -518,81 +616,6 @@ export const HeroBlockPreview: React.FC<BlockPreviewProps> = ({
             )}
           </div>
         ))}
-
-        {/* CTA Button */}
-        <div
-          className={`relative px-4 py-2 rounded transition-all ${
-            selectedElement === "button" ? "border-2 border-solid border-valasys-orange" :
-            hoveredElement === "button" ? "border-2 border-dashed border-valasys-orange" : ""
-          }`}
-          onMouseEnter={() => !isEditingButton && setHoveredElement("button")}
-          onMouseLeave={() => setHoveredElement(null)}
-          onClick={(e) => {
-            e.stopPropagation();
-            setSelectedElement("button");
-            onElementSelect?.("button");
-          }}
-        >
-          {isEditingButton ? (
-            <input
-              type="text"
-              value={editButtonText}
-              onChange={(e) => setEditButtonText(e.target.value)}
-              onBlur={handleButtonSave}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleButtonSave();
-                if (e.key === "Escape") {
-                  setEditButtonText(props.ctaButtonText || "");
-                  setIsEditingButton(false);
-                }
-              }}
-              onClick={(e) => e.stopPropagation()}
-              className="px-6 md:px-8 py-2 md:py-3 rounded focus:outline-none text-sm md:text-base"
-              style={{ backgroundColor: props.ctaButtonColor || "#FF6A00", color: "white" }}
-              autoFocus
-            />
-          ) : (
-            <button
-              style={{
-                backgroundColor: props.ctaButtonColor,
-                color: props.ctaButtonTextColor || "#ffffff"
-              }}
-              className="px-6 md:px-8 py-2 md:py-3 font-medium rounded hover:opacity-90 transition-opacity text-sm md:text-base cursor-text"
-              onDoubleClick={(e) => {
-                e.stopPropagation();
-                setEditButtonText(props.ctaButtonText || "");
-                setIsEditingButton(true);
-              }}
-            >
-              {props.ctaButtonText}
-            </button>
-          )}
-
-          {selectedElement === "button" && (
-            <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 flex gap-1 bg-white rounded-lg border border-valasys-orange p-2 z-50 mt-2">
-              <button
-                className="h-8 w-8 p-0 hover:bg-orange-50 hover:text-valasys-orange transition-colors flex items-center justify-center rounded"
-                title="Copy button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleCopyButton();
-                }}
-              >
-                <Copy className="w-4 h-4" />
-              </button>
-              <button
-                className="h-8 w-8 p-0 hover:bg-red-50 hover:text-red-600 transition-colors flex items-center justify-center rounded"
-                title="Delete button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDeleteButton();
-                }}
-              >
-                <Trash2 className="w-4 h-4" />
-              </button>
-            </div>
-          )}
-        </div>
 
         {/* Additional Copied Buttons */}
         {props.buttons?.map((button: any, idx: number) => (
