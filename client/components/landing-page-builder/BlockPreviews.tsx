@@ -189,8 +189,8 @@ export const HeroBlockPreview: React.FC<BlockPreviewProps> = ({
   const [editSubheadingText, setEditSubheadingText] = React.useState(props.subheading || "");
   const [isEditingButton, setIsEditingButton] = React.useState(false);
   const [editButtonText, setEditButtonText] = React.useState(props.ctaButtonText || "");
-  const [hoveredElement, setHoveredElement] = React.useState<"heading" | "subheading" | "button" | null>(null);
-  const [selectedElement, setSelectedElement] = React.useState<"heading" | "subheading" | "button" | null>(null);
+  const [hoveredElement, setHoveredElement] = React.useState<"heading" | "subheading" | "button" | null | string>(null);
+  const [selectedCopyElement, setSelectedCopyElement] = React.useState<string | null>(null);
 
   const handleHeadlineSave = () => {
     if (editHeadingText.trim()) {
@@ -216,7 +216,7 @@ export const HeroBlockPreview: React.FC<BlockPreviewProps> = ({
   const handleCopyHeading = () => {
     const headlines = props.headlines || [];
     onUpdate?.({ ...props, headlines: [...headlines, { text: props.headline }] });
-    setSelectedElement(null);
+    onElementSelect?.(null);
   };
 
   const handleDeleteHeading = (index?: number) => {
@@ -226,13 +226,13 @@ export const HeroBlockPreview: React.FC<BlockPreviewProps> = ({
       const headlines = props.headlines || [];
       onUpdate?.({ ...props, headlines: headlines.filter((_, i) => i !== index) });
     }
-    setSelectedElement(null);
+    onElementSelect?.(null);
   };
 
   const handleCopySubheading = () => {
     const subheadings = props.subheadings || [];
     onUpdate?.({ ...props, subheadings: [...subheadings, { text: props.subheading }] });
-    setSelectedElement(null);
+    onElementSelect?.(null);
   };
 
   const handleDeleteSubheading = (index?: number) => {
@@ -242,13 +242,13 @@ export const HeroBlockPreview: React.FC<BlockPreviewProps> = ({
       const subheadings = props.subheadings || [];
       onUpdate?.({ ...props, subheadings: subheadings.filter((_, i) => i !== index) });
     }
-    setSelectedElement(null);
+    onElementSelect?.(null);
   };
 
   const handleCopyButton = () => {
     const buttons = props.buttons || [];
     onUpdate?.({ ...props, buttons: [...buttons, { text: props.ctaButtonText, color: props.ctaButtonColor }] });
-    setSelectedElement(null);
+    onElementSelect?.(null);
   };
 
   const handleDeleteButton = (index?: number) => {
@@ -258,7 +258,7 @@ export const HeroBlockPreview: React.FC<BlockPreviewProps> = ({
       const buttons = props.buttons || [];
       onUpdate?.({ ...props, buttons: buttons.filter((_, i) => i !== index) });
     }
-    setSelectedElement(null);
+    onElementSelect?.(null);
   };
 
   return (
@@ -359,21 +359,21 @@ export const HeroBlockPreview: React.FC<BlockPreviewProps> = ({
           <div
             key={idx}
             className={`relative mb-4 px-4 py-2 rounded transition-all ${
-              selectedElement === `heading-${idx}` ? "border-2 border-solid border-valasys-orange" :
+              selectedCopyElement === `heading-${idx}` ? "border-2 border-solid border-valasys-orange" :
               hoveredElement === `heading-${idx}` ? "border-2 border-dashed border-valasys-orange" : ""
             }`}
             onMouseEnter={() => setHoveredElement(`heading-${idx}`)}
             onMouseLeave={() => setHoveredElement(null)}
             onClick={(e) => {
               e.stopPropagation();
-              setSelectedElement(`heading-${idx}`);
+              setSelectedCopyElement(`heading-${idx}`);
             }}
           >
             <h1 className="text-2xl md:text-5xl font-bold text-gray-900">
               {heading.text}
             </h1>
 
-            {selectedElement === `heading-${idx}` && (
+            {selectedCopyElement === `heading-${idx}` && (
               <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 flex gap-1 bg-white rounded-lg border border-valasys-orange p-2 z-50 mt-2">
                 <button
                   className="h-8 w-8 p-0 hover:bg-orange-50 hover:text-valasys-orange transition-colors flex items-center justify-center rounded"
@@ -477,21 +477,21 @@ export const HeroBlockPreview: React.FC<BlockPreviewProps> = ({
           <div
             key={idx}
             className={`relative mb-8 px-4 py-2 rounded transition-all max-w-2xl ${
-              selectedElement === `subheading-${idx}` ? "border-2 border-solid border-valasys-orange" :
+              selectedCopyElement === `subheading-${idx}` ? "border-2 border-solid border-valasys-orange" :
               hoveredElement === `subheading-${idx}` ? "border-2 border-dashed border-valasys-orange" : ""
             }`}
             onMouseEnter={() => setHoveredElement(`subheading-${idx}`)}
             onMouseLeave={() => setHoveredElement(null)}
             onClick={(e) => {
               e.stopPropagation();
-              setSelectedElement(`subheading-${idx}`);
+              setSelectedCopyElement(`subheading-${idx}`);
             }}
           >
             <p className="text-sm md:text-xl text-gray-600">
               {subheading.text}
             </p>
 
-            {selectedElement === `subheading-${idx}` && (
+            {selectedCopyElement === `subheading-${idx}` && (
               <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 flex gap-1 bg-white rounded-lg border border-valasys-orange p-2 z-50 mt-2">
                 <button
                   className="h-8 w-8 p-0 hover:bg-orange-50 hover:text-valasys-orange transition-colors flex items-center justify-center rounded"
@@ -599,14 +599,14 @@ export const HeroBlockPreview: React.FC<BlockPreviewProps> = ({
           <div
             key={idx}
             className={`relative px-4 py-2 rounded transition-all mt-3 ${
-              selectedElement === `button-${idx}` ? "border-2 border-solid border-valasys-orange" :
+              selectedCopyElement === `button-${idx}` ? "border-2 border-solid border-valasys-orange" :
               hoveredElement === `button-${idx}` ? "border-2 border-dashed border-valasys-orange" : ""
             }`}
             onMouseEnter={() => !isEditingButton && setHoveredElement(`button-${idx}`)}
             onMouseLeave={() => setHoveredElement(null)}
             onClick={(e) => {
               e.stopPropagation();
-              setSelectedElement(`button-${idx}`);
+              setSelectedCopyElement(`button-${idx}`);
             }}
           >
             <button
@@ -616,7 +616,7 @@ export const HeroBlockPreview: React.FC<BlockPreviewProps> = ({
               {button.text}
             </button>
 
-            {selectedElement === `button-${idx}` && (
+            {selectedCopyElement === `button-${idx}` && (
               <div className="absolute -bottom-10 left-1/2 transform -translate-x-1/2 flex gap-1 bg-white rounded-lg border border-valasys-orange p-2 z-50 mt-2">
                 <button
                   className="h-8 w-8 p-0 hover:bg-orange-50 hover:text-valasys-orange transition-colors flex items-center justify-center rounded"
