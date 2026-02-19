@@ -296,6 +296,80 @@ export const SettingsPanel: React.FC<SettingsPanelProps> = ({
                 className="focus:ring-valasys-orange focus:ring-2"
               />
             </div>
+            <div className="border-t border-gray-200 pt-4 mt-4">
+              <h3 className="text-xs font-semibold text-gray-700 mb-4 block">Headline Sizing</h3>
+              <div>
+                <Label className="text-xs font-semibold text-gray-700 mb-2 block">
+                  Headline Width
+                </Label>
+                <Input
+                  type="text"
+                  placeholder="100%, 500px, etc."
+                  value={props.headlineWidth || "100%"}
+                  onChange={(e) =>
+                    onBlockUpdate({
+                      ...block,
+                      properties: { ...props, headlineWidth: e.target.value },
+                    })
+                  }
+                  className="focus:ring-valasys-orange focus:ring-2"
+                />
+              </div>
+              <div className="mt-3">
+                <Label className="text-xs font-semibold text-gray-700 mb-2 block">
+                  Headline Height
+                </Label>
+                <Input
+                  type="text"
+                  placeholder="auto, 200px, etc."
+                  value={props.headlineHeight || "auto"}
+                  onChange={(e) =>
+                    onBlockUpdate({
+                      ...block,
+                      properties: { ...props, headlineHeight: e.target.value },
+                    })
+                  }
+                  className="focus:ring-valasys-orange focus:ring-2"
+                />
+              </div>
+            </div>
+            <div className="border-t border-gray-200 pt-4 mt-4">
+              <h3 className="text-xs font-semibold text-gray-700 mb-4 block">Subheading Sizing</h3>
+              <div>
+                <Label className="text-xs font-semibold text-gray-700 mb-2 block">
+                  Subheading Width
+                </Label>
+                <Input
+                  type="text"
+                  placeholder="100%, 500px, etc."
+                  value={props.subheadingWidth || "100%"}
+                  onChange={(e) =>
+                    onBlockUpdate({
+                      ...block,
+                      properties: { ...props, subheadingWidth: e.target.value },
+                    })
+                  }
+                  className="focus:ring-valasys-orange focus:ring-2"
+                />
+              </div>
+              <div className="mt-3">
+                <Label className="text-xs font-semibold text-gray-700 mb-2 block">
+                  Subheading Height
+                </Label>
+                <Input
+                  type="text"
+                  placeholder="auto, 100px, etc."
+                  value={props.subheadingHeight || "auto"}
+                  onChange={(e) =>
+                    onBlockUpdate({
+                      ...block,
+                      properties: { ...props, subheadingHeight: e.target.value },
+                    })
+                  }
+                  className="focus:ring-valasys-orange focus:ring-2"
+                />
+              </div>
+            </div>
           </div>
         );
 
