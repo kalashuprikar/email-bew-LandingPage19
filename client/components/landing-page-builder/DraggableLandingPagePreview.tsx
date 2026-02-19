@@ -26,6 +26,7 @@ import {
   ParagraphBlockPreview,
   RichTextBlockPreview,
   QuoteBlockPreview,
+  TextHeadingsBlockPreview,
 } from "./BlockPreviews";
 import {
   createHeaderBlock,
@@ -44,6 +45,7 @@ import {
   createParagraphBlock,
   createRichTextBlock,
   createQuoteBlock,
+  createTextHeadingsBlock,
 } from "./utils";
 
 interface DraggableLandingPagePreviewProps {
@@ -78,6 +80,7 @@ const BLOCK_CREATORS = {
   paragraph: createParagraphBlock,
   "rich-text": createRichTextBlock,
   quote: createQuoteBlock,
+  "text-headings-composite": createTextHeadingsBlock,
 };
 
 const DragItem: React.FC<{
@@ -213,6 +216,9 @@ const DragItem: React.FC<{
       break;
     case "quote":
       blockContent = <QuoteBlockPreview {...blockProps} />;
+      break;
+    case "text-headings-composite":
+      blockContent = <TextHeadingsBlockPreview {...blockProps} />;
       break;
     default:
       blockContent = <div>Unknown block type</div>;

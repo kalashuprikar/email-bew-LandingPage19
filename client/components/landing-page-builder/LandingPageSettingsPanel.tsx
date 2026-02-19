@@ -994,6 +994,182 @@ export const LandingPageSettingsPanel: React.FC<
     </div>
   );
 
+  const renderTextHeadingsBlockSettings = () => (
+    <div className="space-y-6">
+      <div className="border-b border-gray-200 pb-4">
+        <h4 className="font-semibold text-gray-900 mb-4">Container Styling</h4>
+
+        <div className="space-y-4">
+          <div>
+            <Label className="text-sm font-medium">Background Color</Label>
+            <div className="flex gap-2">
+              <Input
+                type="color"
+                value={localProps.containerBackgroundColor || "#ffffff"}
+                onChange={(e) => updateProperty("containerBackgroundColor", e.target.value)}
+                className="w-12 h-10 p-1 cursor-pointer"
+              />
+              <Input
+                value={localProps.containerBackgroundColor || "#ffffff"}
+                onChange={(e) => updateProperty("containerBackgroundColor", e.target.value)}
+                placeholder="#ffffff"
+                className="flex-1"
+              />
+            </div>
+          </div>
+
+          <div>
+            <Label className="text-sm font-medium">Padding (px)</Label>
+            <Input
+              value={localProps.containerPadding || "24px"}
+              onChange={(e) => updateProperty("containerPadding", e.target.value)}
+              placeholder="24px"
+            />
+          </div>
+
+          <div>
+            <Label className="text-sm font-medium">Margin (px)</Label>
+            <Input
+              value={localProps.containerMargin || "0px"}
+              onChange={(e) => updateProperty("containerMargin", e.target.value)}
+              placeholder="0px"
+            />
+          </div>
+
+          <div>
+            <Label className="text-sm font-medium">Border Radius (px)</Label>
+            <Input
+              value={localProps.containerBorderRadius || "0px"}
+              onChange={(e) => updateProperty("containerBorderRadius", e.target.value)}
+              placeholder="0px"
+            />
+          </div>
+
+          <div>
+            <Label className="text-sm font-medium">Box Shadow</Label>
+            <Input
+              value={localProps.containerBoxShadow || "none"}
+              onChange={(e) => updateProperty("containerBoxShadow", e.target.value)}
+              placeholder="none or shadow CSS"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div className="border-b border-gray-200 pb-4">
+        <h4 className="font-semibold text-gray-900 mb-4">Edit Elements</h4>
+        <p className="text-xs text-gray-600 mb-3">Click on text elements in the preview to edit them individually. Use the styling controls below to customize all elements at once.</p>
+
+        {localProps.elements && localProps.elements.length > 0 ? (
+          <div className="space-y-2">
+            {localProps.elements.map((element: any) => (
+              <div key={element.id} className="p-3 bg-gray-50 rounded border border-gray-200">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <p className="text-xs font-medium text-gray-700 mb-1">
+                      {element.type === "heading" ? `Heading (${element.level})` : element.type.charAt(0).toUpperCase() + element.type.slice(1)}
+                    </p>
+                    <p className="text-xs text-gray-600 truncate">{element.text}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-xs text-gray-500 italic">No elements added yet. Click the block to add elements.</p>
+        )}
+      </div>
+
+      <div>
+        <h4 className="font-semibold text-gray-900 mb-4">Text Styling (All Elements)</h4>
+        <p className="text-xs text-gray-600 mb-4">Apply these styles to all text elements in the block:</p>
+
+        <div className="space-y-4">
+          <div>
+            <Label className="text-sm font-medium">Font Family</Label>
+            <select
+              value={localProps.defaultFontFamily || "Arial, sans-serif"}
+              onChange={(e) => {
+                updateProperty("defaultFontFamily", e.target.value);
+                // Update all elements
+                const updatedElements = localProps.elements?.map((el: any) => ({
+                  ...el,
+                  fontFamily: e.target.value,
+                })) || [];
+                updateProperty("elements", updatedElements);
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500"
+            >
+              <option value="Arial, sans-serif">Arial</option>
+              <option value="Georgia, serif">Georgia</option>
+              <option value="Times New Roman, serif">Times New Roman</option>
+              <option value="Courier New, monospace">Courier New</option>
+              <option value="Verdana, sans-serif">Verdana</option>
+              <option value="Trebuchet MS, sans-serif">Trebuchet MS</option>
+            </select>
+          </div>
+
+          <div>
+            <Label className="text-sm font-medium">Text Color</Label>
+            <div className="flex gap-2">
+              <Input
+                type="color"
+                value={localProps.defaultTextColor || "#1f2937"}
+                onChange={(e) => {
+                  updateProperty("defaultTextColor", e.target.value);
+                  const updatedElements = localProps.elements?.map((el: any) => ({
+                    ...el,
+                    textColor: e.target.value,
+                  })) || [];
+                  updateProperty("elements", updatedElements);
+                }}
+                className="w-12 h-10 p-1 cursor-pointer"
+              />
+              <Input
+                value={localProps.defaultTextColor || "#1f2937"}
+                onChange={(e) => {
+                  updateProperty("defaultTextColor", e.target.value);
+                  const updatedElements = localProps.elements?.map((el: any) => ({
+                    ...el,
+                    textColor: e.target.value,
+                  })) || [];
+                  updateProperty("elements", updatedElements);
+                }}
+                placeholder="#1f2937"
+                className="flex-1"
+              />
+            </div>
+          </div>
+
+          <div>
+            <Label className="text-sm font-medium">Text Alignment</Label>
+            <div className="flex gap-2">
+              {["left", "center", "right"].map((align) => (
+                <button
+                  key={align}
+                  onClick={() => {
+                    const updatedElements = localProps.elements?.map((el: any) => ({
+                      ...el,
+                      textAlign: align,
+                    })) || [];
+                    updateProperty("elements", updatedElements);
+                  }}
+                  className={`flex-1 py-2 px-3 rounded border text-xs font-medium transition-colors ${
+                    localProps.elements?.[0]?.textAlign === align
+                      ? "bg-valasys-orange text-white border-valasys-orange"
+                      : "border-gray-300 hover:border-gray-400"
+                  }`}
+                >
+                  {align.charAt(0).toUpperCase() + align.slice(1)}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
   const renderBlockSettings = () => {
     switch (block.type) {
       case "header":
@@ -1008,6 +1184,8 @@ export const LandingPageSettingsPanel: React.FC<
         return renderAboutBlockSettings();
       case "footer":
         return renderFooterBlockSettings();
+      case "text-headings-composite":
+        return renderTextHeadingsBlockSettings();
       default:
         return renderDefaultSettings();
     }
